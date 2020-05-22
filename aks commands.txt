@@ -1,0 +1,53 @@
+az account set -s <<subscription name>>
+
+az ad sp create-for-rbac --skip-assignment --verbose
+
+{
+  "appId": "xxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "displayName": "qqqqqqqqqqqqqq",
+  "name": "qqqqqqqqqqqqqqqqqqqqqq",
+  "password": "yyyyyyyyyyyyyyyyyyyyyyy",
+  "tenant": "qqqqqqqqqqqqqqqqqqqqqq"
+}
+az group create -l "West Europe" -n "acrpart1" --verbose
+az group create -l "West Europe" -n "akspart1" --verbose
+
+az aks create -g akspart1 -n akslinux --node-count 2 --network-plugin azure --service-principal xxxxxxxxxxxxxxxx --client-secret yyyyyyyyyyyyyyyyyyy --generate-ssh-keys --verbose
+
+
+az acr create -n acrakspart1 -g acrpart1  --sku standard --admin-enabled -l "West Europe" --verbose
+
+
+
+
+az acr credential show -n acrakspart1 -g acrpart
+
+
+
+
+docker tag webapplication1:latest acrakspart1.azurecr.io/webapplication1:latest
+
+docker login -p hSifDw/JMkleUcSCUJDrMF1CuwZrhGT2 -u acrakspart1 acrakspart1.azurecr.io
+
+
+docker push acrakspart1.azurecr.io/webapplication1:latest
+
+
+az aks install-cli
+az aks get-credentials --resource-group akspart1 --name akslinux
+
+az role assignment create --assignee xxxxxxxxxxxxxxxxxxxxx --scope "/subscriptions/wwwwwwwwwwwwwwwwwww/resourceGroups/acrpart1/providers/Microsoft.ContainerRegistry/registries/acrakspart1"  --role acrpull
+
+kubectl get nodes
+
+kubectl run firstpod --imageacrakspart1.azurecr.io/webapplication1:latest --port=80 --restart=Always
+kubectl run secondpod --imageacrakspart1.azurecr.io/webapplication1:latest --port=80 --restart=Never 
+kubectl expose deployment firstpod --port=80 --target-port=80 --type=LoadBalancer
+kubectl get deployments
+kubectl get rs
+kubectl get pods
+kubectl describe pod  asadadasdadadsasd
+kubectl get service
+
+
+
